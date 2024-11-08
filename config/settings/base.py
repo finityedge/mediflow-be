@@ -379,8 +379,8 @@ REST_FRAMEWORK = {
 # ------------------------------------------------------------------------------
 # https://drf-spectacular.readthedocs.io/en/latest/settings.html
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Care API",
-    "DESCRIPTION": "Documentation of API endpoints of Care ",
+    "TITLE": "Mediflow API",
+    "DESCRIPTION": "Documentation of API endpoints of Mediflow ",
     "VERSION": "1.0.0",
 }
 
