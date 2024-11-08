@@ -1,0 +1,6 @@
+.venv
+.git
+htmlcov
+staticfiles
+.coverage
+care/media/
