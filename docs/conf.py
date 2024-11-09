@@ -13,9 +13,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Care"
-copyright = """2023, Open Healthcare Network"""  # noqa: A001
-author = "ohcnetwork"
+project = "Mediflow"
+copyright = """2024, FinityEdge"""  # noqa: A001
+author = "finityeddge"
 
 
 # -- General configuration ---------------------------------------------------

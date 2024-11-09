@@ -1,15 +1,14 @@
-
 services:
   backend:
-    image: care_local
     build:
       context: .
       dockerfile: docker/dev.Dockerfile
+    image: care_local  # Image name comes after build configuration
     env_file:
       - ./docker/.local.env
     volumes:
       - .:/app
-    entrypoint: [ "bash", "scripts/start-dev.sh" ]
+    entrypoint: [ "sh", "scripts/start-dev.sh" ]
     ports:
       - "9000:9000"
       - "9876:9876" #debugpy
@@ -23,13 +22,89 @@ services:
         condition: service_healthy
 
   celery:
+    build:  # Add build configuration for celery
+      context: .
+      dockerfile: docker/dev.Dockerfile
     image: care_local
     env_file:
       - ./docker/.local.env
-    entrypoint: [ "bash", "scripts/celery-dev.sh" ]
+    entrypoint: [ "sh", "scripts/celery-dev.sh" ]
     restart: unless-stopped
     depends_on:
       - db
       - redis
     volumes:
       - .:/app
+    healthcheck:
+      test: ["CMD", "sh", "/app/scripts/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 48
+      start_period: 10s
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: care
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+
+# services:
+#   backend:
+#     image: care_local
+#     build:
+#       context: .
+#       dockerfile: docker/dev.Dockerfile
+#     env_file:
+#       - ./docker/.local.env
+#     volumes:
+#       - .:/app
+#     entrypoint: [ "bash", "scripts/start-dev.sh" ]
+#     ports:
+#       - "9000:9000"
+#       - "9876:9876" #debugpy
+#     restart: unless-stopped
+#     depends_on:
+#       db:
+#         condition: service_started
+#       redis:
+#         condition: service_started
+#       celery:
+#         condition: service_healthy
+
+#   celery:
+#     image: care_local
+#     env_file:
+#       - ./docker/.local.env
+#     entrypoint: [ "bash", "scripts/celery-dev.sh" ]
+#     restart: unless-stopped
+#     depends_on:
+#       - db
+#       - redis
+#     volumes:
+#       - .:/app
