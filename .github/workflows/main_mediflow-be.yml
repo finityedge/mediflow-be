@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_076db202d5bf4a758477eb5613003ba6 }}/mediflow:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./docker/prod.Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
